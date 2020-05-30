@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/sampa/Desktop/sasasa.db" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><current_tab id="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="961"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="home_value_data"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="home_value_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk=""><sort/><column_widths/><filter_values/><display_formats/><hidden_columns/><plot_y_axes/></table></browse_table_settings></tab_browse><tab_sql><sql name="trend_recommendation_2017.sql">/*How would you describe the trend in home values for each state from from 2007 to 2017? 
+Which states would you recommend for making real estate investments?*/
+
+WITH base as(
+SELECT state, avg(value) as 'BaseYear'
+FROM home_value_data
+WHERE substr(date, 1, 4) = '2007'
+GROUP BY 1),
+
+test as(
+SELECT state, avg(value) as 'TestYear'
+FROM home_value_data
+WHERE substr(date, 1, 4) = '2017'
+GROUP BY 1),
+
+calculation as (
+SELECT base.state, round(((TestYear / BaseYear) * 100) - 100, 2) as 'Trend'
+from base, test
+group by 1)
+
+
+select state, trend,
+CASE
+when trend &gt; 150 then 'Recommend'
+else 'not recommend'
+end as 'verdict'
+from calculation
+GROUP by 1;</sql><current_tab id="0"/></tab_sql></sqlb_project>
